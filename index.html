@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Web Tools</title>
+    <link rel="stylesheet" href="exp5.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>JavaScript applications</h1>
+    </header>
+
+    <main class="tools-grid">
+        <section class="card" id="words">
+            <h2>Shortest &amp; Longest Word</h2>
+            <label for="sentence">Enter a sentence:</label>
+            <input type="text" id="sentence" placeholder="Web Development Tutorial">
+            <button type="button" onclick="findWords()">Find Words</button>
+            <div class="result">
+                <p>Shortest Word: <span id="shortest"></span></p>
+                <p>Longest Word: <span id="longest"></span></p>
+            </div>
+        </section>
+
+        <section class="card" id="bmi">
+            <h2>Body Mass Index Calculator</h2>
+            <label for="weight">Weight (in kilograms):</label>
+            <input type="number" id="weight" min="0" step="any" placeholder="Enter weight">
+            <label for="height">Height (in meters):</label>
+            <input type="number" id="height" min="0" step="any" placeholder="Enter height">
+            <button type="button" onclick="calculateBMI()">Get BMI</button>
+            <div class="result">
+                <p>Your BMI is <span id="score"></span></p>
+                <p>Category: <span id="type"></span></p>
+            </div>
+        </section>
+
+        <section class="card" id="fruit">
+            <h2>Fruit Farm</h2>
+            <div class="inline-fields">
+                <div>
+                    <label for="rows">Rows:</label>
+                    <input type="number" id="rows" min="1" max="10" value="2">
+                </div>
+                <div>
+                    <label for="columns">Columns:</label>
+                    <input type="number" id="columns" min="1" max="10" value="3">
+                </div>
+            </div>
+            <button type="button" onclick="grow()">Plant Garden</button>
+            <div id="garden" aria-live="polite"></div>
+        </section>
+
+        <section class="card" id="currency">
+            <h2>Currency Converter</h2>
+            <label for="amount">Enter amount:</label>
+            <input type="number" id="amount" step="any" min="0" placeholder="Enter amount">
+            <div class="conversion">
+                <div>
+                    <label for="from">From:</label>
+                    <select id="from">
+                        <option value="INR">Indian Rupee (INR)</option>
+                        <option value="USD">US Dollar (USD)</option>
+                    </select>
+                </div>
+                <span class="arrow" aria-hidden="true">→</span>
+                <div>
+                    <label for="to">To:</label>
+                    <select id="to">
+                        <option value="USD">US Dollar (USD)</option>
+                        <option value="INR">Indian Rupee (INR)</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" onclick="convertCurrency()">Convert</button>
+            <div class="result centered">
+                Converted Amount: <span id="answer"></span>
+            </div>
+        </section>
+
+        <section class="card" id="coin">
+            <h2>Heads or Tails?</h2>
+            <img src="head.webp" id="coin-image" class="coin-image" alt="Coin showing heads">
+            <button type="button" id="flip">Flip Coin</button>
+            <div class="result">
+                <p>Heads Total: <span id="num_heads">0</span></p>
+                <p>Tails Total: <span id="num_tails">0</span></p>
+            </div>
+        </section>
+
+        <section class="card" id="cake">
+            <h2>Birthday Cake Order</h2>
+            <label for="small">Number of ½ kg cakes (₹100 each):</label>
+            <input type="number" id="small" min="0" step="1" value="0">
+            <label for="medium">Number of 1 kg cakes (₹200 each):</label>
+            <input type="number" id="medium" min="0" step="1" value="0">
+            <label for="large">Number of 2 kg cakes (₹400 each):</label>
+            <input type="number" id="large" min="0" step="1" value="0">
+            <fieldset class="tip-options">
+                <legend>Tip percentage</legend>
+                <label><input type="radio" name="tip" value="10"> 10%</label>
+                <label><input type="radio" name="tip" value="15" checked> 15%</label>
+                <label><input type="radio" name="tip" value="20"> 20%</label>
+            </fieldset>
+            <button type="button" id="cake-submit">Calculate Price</button>
+            <div class="result centered">Total Price: <span id="price">₹0.00</span></div>
+        </section>
+    </main>
+
+    <script>
+        function findWords() {
+            const sentence = document.getElementById("sentence").value.trim();
+            if (!sentence) {
+                document.getElementById("shortest").textContent = "";
+                document.getElementById("longest").textContent = "";
+                alert("Please enter a sentence.");
+                return;
+            }
+
+            const words = sentence.split(/\s+/);
+            let shortest = words[0];
+            let longest = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (words[i].length < shortest.length) shortest = words[i];
+                if (words[i].length > longest.length) longest = words[i];
+            }
+
+            document.getElementById("shortest").textContent = shortest;
+            document.getElementById("longest").textContent = longest;
+        }
+
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById("weight").value);
+            const height = parseFloat(document.getElementById("height").value);
+
+            if (!Number.isFinite(weight) || !Number.isFinite(height) || weight <= 0 || height <= 0) {
+                alert("Please enter a valid positive weight and height.");
+                return;
+            }
+
+            const bmi = weight / (height * height);
+            let type;
+
+            if (bmi < 18.5) type = "Underweight";
+            else if (bmi < 25) type = "Normal";
+            else if (bmi < 30) type = "Overweight";
+            else type = "Obese";
+
+            document.getElementById("score").textContent = bmi.toFixed(2);
+            document.getElementById("type").textContent = type;
+        }
+
+        function grow() {
+            const rows = Number.parseInt(document.getElementById("rows").value, 10);
+            const columns = Number.parseInt(document.getElementById("columns").value, 10);
+            const garden = document.getElementById("garden");
+
+            if (!Number.isInteger(rows) || !Number.isInteger(columns) ||
+                rows < 1 || columns < 1 || rows > 10 || columns > 10) {
+                alert("Please enter rows and columns from 1 to 10.");
+                return;
+            }
+
+            garden.replaceChildren();
+            garden.style.gridTemplateColumns = `repeat(${columns}, minmax(55px, 100px))`;
+
+            const fruits = ["Apple.webp", "orange.webp"];
+            for (let i = 0; i < rows * columns; i++) {
+                const image = document.createElement("img");
+                image.src = fruits[Math.floor(Math.random() * fruits.length)];
+                image.alt = "Randomly planted fruit";
+                image.onerror = function () {
+                    this.alt = "Fruit image missing: check the images folder";
+                    this.style.display = "none";
+                };
+                garden.appendChild(image);
+            }
+        }
+
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById("amount").value);
+            if (!Number.isFinite(amount) || amount < 0) {
+                alert("Please enter a valid non-negative amount.");
+                return;
+            }
+
+            const from = document.getElementById("from").value;
+            const to = document.getElementById("to").value;
+            const rupeesPerDollar = 90;
+            let result = amount;
+
+            if (from === "INR" && to === "USD") result = amount / rupeesPerDollar;
+            else if (from === "USD" && to === "INR") result = amount * rupeesPerDollar;
+
+            const symbol = to === "INR" ? "₹" : "$";
+            document.getElementById("answer").textContent =
+                symbol + result.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        let heads = 0;
+        let tails = 0;
+
+        document.getElementById("flip").addEventListener("click", function () {
+            const isHeads = Math.random() < 0.5;
+            const coinImage = document.getElementById("coin-image");
+
+            if (isHeads) {
+                heads++;
+                coinImage.src = "head.webp";
+                coinImage.alt = "Coin showing heads";
+            } else {
+                tails++;
+                coinImage.src = "tail.webp";
+                coinImage.alt = "Coin showing tails";
+            }
+
+            document.getElementById("num_heads").textContent = heads;
+            document.getElementById("num_tails").textContent = tails;
+        });
+
+        document.getElementById("cake-submit").addEventListener("click", function () {
+            const small = Number(document.getElementById("small").value);
+            const medium = Number(document.getElementById("medium").value);
+            const large = Number(document.getElementById("large").value);
+
+            if (![small, medium, large].every(n => Number.isInteger(n) && n >= 0)) {
+                alert("Please enter whole, non-negative numbers of cakes.");
+                return;
+            }
+
+            const subtotal = small * 100 + medium * 200 + large * 400;
+            const tax = subtotal * 0.09;
+            const totalAfterTax = subtotal + tax;
+            const tipPercent = Number(document.querySelector('input[name="tip"]:checked').value);
+            const total = totalAfterTax + totalAfterTax * tipPercent / 100;
+
+            document.getElementById("price").textContent =
+                "₹" + total.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        });
+    </script>
+</body>
+</html>
